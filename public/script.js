@@ -7,13 +7,23 @@ const loader = document.getElementById('loader');
 const serverNotLoading = document.getElementById('not-loading');
 const notLoadingBigFont = document.getElementById('not-loading-bigFont');
 const notLoadingSmallFont = document.getElementById('not-loading-smallFont');
-var errCount = 0; 
+const tryAgain = document.getElementById('try-again');
+var errCount = 0;
+var btnCount = 0; 
 
 function exitApp() {
     loader.hidden = true;
     notLoadingBigFont.innerText = 'OOPS!'
-    notLoadingSmallFont.innerText = `Something is wrong \r \n Please try after a while` 
-    serverNotLoading.classList.add('quote-container');
+    notLoadingSmallFont.innerText = `Something went wrong\r \n` 
+    //Adding a button to reload the application
+    if (btnCount < 1) {
+        var btn = document.createElement("button");
+        serverNotLoading.appendChild(btn);
+        btn.textContent = "Try again"
+        serverNotLoading.classList.add('quote-container');
+        btnCount = btnCount + 1;
+    }
+    btn.addEventListener('click', getQuote);
 }
 
 // Show loading
@@ -74,6 +84,7 @@ function TweetQuote() {
 //Event Listeners
 twitterBtn.addEventListener('click', TweetQuote);
 newQuote.addEventListener('click', getQuote);
+
 
 // On load
 getQuote();
