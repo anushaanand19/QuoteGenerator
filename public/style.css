@@ -88,6 +88,10 @@ button:active {
   animation: spin 2s linear infinite;
 }
 
+.not-loading-bigFont {
+  font-size: 5rem;
+  font-weight: bold;
+}
 @keyframes spin {
   0% {
     transform: rotate(0deg);

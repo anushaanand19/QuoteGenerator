@@ -4,6 +4,17 @@ const authorText = document.getElementById('author');
 const twitterBtn = document.getElementById('twitter');
 const newQuote = document.getElementById('new-quote');
 const loader = document.getElementById('loader');
+const serverNotLoading = document.getElementById('not-loading');
+const notLoadingBigFont = document.getElementById('not-loading-bigFont');
+const notLoadingSmallFont = document.getElementById('not-loading-smallFont');
+var errCount = 0; 
+
+function exitApp() {
+    loader.hidden = true;
+    notLoadingBigFont.innerText = 'OOPS!'
+    notLoadingSmallFont.innerText = `Something is wrong \r \n Please try after a while` 
+    serverNotLoading.classList.add('quote-container');
+}
 
 // Show loading
 function showLoadingSpinner() {
@@ -13,16 +24,14 @@ function showLoadingSpinner() {
 
 //Hide Loading
 function removeLoadingSpinner() {
-    if (!loader.hidden) {
         quoteContainer.hidden = false;
         loader.hidden = true;
-    }
 }
 
 // Get Quote from API
 async function getQuote() {
     showLoadingSpinner();
-    const quoteURL = "http://15.207.20.181/quote"
+    const quoteURL = "https://quote-proxy.anusha.dev/quote"
     try {
         const response = await fetch(quoteURL);
         const data = await response.json();
@@ -43,8 +52,14 @@ async function getQuote() {
         removeLoadingSpinner();
     }
     catch(err) {
-        console.log(err);
-        getQuote();
+        errCount = errCount + 1;
+        if (errCount < 5) {
+            getQuote();
+        }
+        else {
+            exitApp();
+        }
+        
     }
 }
 
