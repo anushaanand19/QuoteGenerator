@@ -7,35 +7,38 @@ const loader = document.getElementById('loader');
 const serverNotLoading = document.getElementById('not-loading');
 const notLoadingBigFont = document.getElementById('not-loading-bigFont');
 const notLoadingSmallFont = document.getElementById('not-loading-smallFont');
-const tryAgain = document.getElementById('try-again');
+const tryAgainBtn = document.getElementById('try-again');
 var errCount = 0;
-var btnCount = 0; 
+serverNotLoading.hidden = true;
 
-function exitApp() {
+// Show error msg, when the server is down
+function showErrorMessage() {
     loader.hidden = true;
+    serverNotLoading.hidden = false;
     notLoadingBigFont.innerText = 'OOPS!'
-    notLoadingSmallFont.innerText = `Something went wrong\r \n` 
-    //Adding a button to reload the application
-    if (btnCount < 1) {
-        var btn = document.createElement("button");
-        serverNotLoading.appendChild(btn);
-        btn.textContent = "Try again"
-        serverNotLoading.classList.add('quote-container');
-        btnCount = btnCount + 1;
-    }
-    btn.addEventListener('click', getQuote);
+    notLoadingSmallFont.innerText = `Something went wrong\r \n`
+    tryAgainBtn.innerText = "Try again"
+}
+
+// When the values are obtained, hide the error message
+function hideErrorMessage() { 
+    serverNotLoading.hidden = true;
+    errCount = 0;
 }
 
 // Show loading
 function showLoadingSpinner() {
     loader.hidden = false;
     quoteContainer.hidden = true;
+    serverNotLoading.hidden = true;
 }
 
 //Hide Loading
 function removeLoadingSpinner() {
+    if (!loader.hidden) {
         quoteContainer.hidden = false;
-        loader.hidden = true;
+        loader.hidden = true;}
+        
 }
 
 // Get Quote from API
@@ -60,6 +63,8 @@ async function getQuote() {
         quoteText.innerText = data.quoteText;
         //Stop Loader, show quote
         removeLoadingSpinner();
+        //Hide the error message 
+        hideErrorMessage();
     }
     catch(err) {
         errCount = errCount + 1;
@@ -67,14 +72,15 @@ async function getQuote() {
             getQuote();
         }
         else {
-            exitApp();
+            //Show that the server is not reachable, to try again
+            showErrorMessage();
         }
         
     }
 }
 
 //Tweet the Quote
-function TweetQuote() {
+function tweetQuote() {
     const quote = quoteText.innerText;
     const author = authorText.innerText;
     const twitterURL = `https://twitter.com/intent/tweet?text=${quote} - ${author}`;
@@ -82,8 +88,9 @@ function TweetQuote() {
 }
 
 //Event Listeners
-twitterBtn.addEventListener('click', TweetQuote);
+twitterBtn.addEventListener('click', tweetQuote);
 newQuote.addEventListener('click', getQuote);
+tryAgainBtn.addEventListener('click', getQuote);
 
 
 // On load
